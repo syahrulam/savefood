@@ -1,0 +1,63 @@
+{% extends "layout/base.html" %}
+
+{% block content %}
+<div class="container-xxl py-5">
+    <div class="container">
+        <div class="text-center mx-auto mb-4">
+            <h1 class="display-5 fw-bold text-primary">Penerima Donasi Perorangan</h1>
+            <p class="text-secondary fs-5">Isi formulir di bawah ini untuk menerima donasi makanan.</p>
+        </div>
+
+        <!-- Form Penerima -->
+        <form id="penerimaForm" class="bg-light p-4 rounded shadow-sm">
+            <h4 class="mb-3 fw-bold text-secondary">Formulir Penerima Donasi</h4>
+            <div class="row g-4">
+                <!-- Nama Penerima -->
+                <div class="col-md-6">
+                    <label for="recipientName" class="form-label">Nama Penerima</label>
+                    <input type="text" class="form-control rounded-pill" id="recipientName" placeholder="Masukkan nama Anda" required>
+                </div>
+
+                <!-- Kontak Penerima -->
+                <div class="col-md-6">
+                    <label for="recipientContact" class="form-label">Nomor Telepon</label>
+                    <input type="tel" class="form-control rounded-pill" id="recipientContact" placeholder="Masukkan nomor telepon Anda" required>
+                </div>
+
+                <!-- Alamat Penerima -->
+                <div class="col-md-12">
+                    <label for="recipientAddress" class="form-label">Alamat Penerima</label>
+                    <textarea class="form-control rounded" id="recipientAddress" rows="3" placeholder="Masukkan alamat lengkap Anda" required></textarea>
+                </div>
+
+                <!-- Kebutuhan Makanan -->
+                <div class="col-md-6">
+                    <label for="foodNeeded" class="form-label">Jenis Makanan yang Dibutuhkan</label>
+                    <input type="text" class="form-control rounded-pill" id="foodNeeded" placeholder="Makanan Berat, Makanan Ringan" required>
+                </div>
+
+                <!-- Jumlah Kebutuhan -->
+                <div class="col-md-6">
+                    <label for="foodQuantity" class="form-label">Jumlah Porsi yang Dibutuhkan</label>
+                    <input type="number" class="form-control rounded-pill" id="foodQuantity" placeholder="Masukkan jumlah porsi" required>
+                </div>
+            </div>
+
+            <!-- Tombol Kirim -->
+            <div class="mt-4 text-center">
+                <button type="submit" class="btn btn-success px-5 py-2 rounded-pill fw-bold">Ajukan Penerimaan</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    document.getElementById("penerimaForm").addEventListener("submit", function (e) {
+        e.preventDefault();
+        alert("Formulir penerimaan donasi Anda telah diajukan. Terima kasih!");
+    });
+</script>
+{% endblock %}

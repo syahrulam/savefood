@@ -1,0 +1,100 @@
+<!-- templates/donasi.html -->
+{% extends "layout/base.html" %}
+
+{% block content %}
+<!-- Donasi Form Start -->
+<div class="container-xxl py-5">
+    <div class="container">
+        <div class="text-center mx-auto mb-5">
+            <h1 class="display-6">Form Riwayat Donasi</h1>
+            <p class="text-primary fs-5">Berikan makanan berlebih Anda kepada mereka yang membutuhkan</p>
+        </div>
+        <form>
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label for="donorName" class="form-label">Nama Donatur</label>
+                    <input type="text" class="form-control" id="donorName" placeholder="Masukkan nama Anda" required>
+                </div>
+                <div class="col-md-6">
+                    <label for="foodName" class="form-label">Nama Makanan</label>
+                    <input type="text" class="form-control" id="foodName" placeholder="Contoh: Nasi Kotak" required>
+                </div>
+                <div class="col-md-6">
+                    <label for="quantity" class="form-label">Jumlah</label>
+                    <input type="number" class="form-control" id="quantity" placeholder="Masukkan jumlah porsi" required>
+                </div>
+                <div class="col-md-6">
+                    <label for="expiryDate" class="form-label">Tanggal Kedaluwarsa</label>
+                    <input type="date" class="form-control" id="expiryDate" required>
+                </div>
+                <!-- Lokasi Donatur -->
+                <div class="col-md-12">
+                    <label for="location" class="form-label">Lokasi Donatur</label>
+                    <input type="text" class="form-control" id="location" placeholder="Pilih lokasi di peta" required readonly>
+                    <small class="form-text text-muted">Klik peta untuk memilih lokasi</small>
+                </div>
+                <div class="col-md-12">
+                    <div id="map" style="height: 400px; width: 100%;"></div>
+                </div>
+                <div class="col-md-12">
+                    <label for="description" class="form-label">Deskripsi Tambahan</label>
+                    <textarea class="form-control" id="description" rows="3" placeholder="Tambahkan informasi tambahan (opsional)"></textarea>
+                </div>
+                <div class="col-12 text-center">
+                    <button type="submit" class="btn btn-primary py-3 px-5">Donasikan Sekarang</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<!-- Donasi Form End -->
+
+<!-- Google Maps API and Script -->
+<script src="https://maps.googleapis.com/maps/api/js?key=YOUR_GOOGLE_MAPS_API_KEY&callback=initMap" async defer></script>
+<script>
+    var map;
+    var marker;
+    var geocoder;
+
+    // Function to initialize the map
+    function initMap() {
+        // Initialize map centered on Brebes (or a default location)
+        map = new google.maps.Map(document.getElementById("map"), {
+            center: { lat: -6.8743, lng: 109.1814 }, // Default location (Brebes)
+            zoom: 13,
+        });
+
+        // Initialize a marker to show selected location
+        marker = new google.maps.Marker({
+            map: map,
+            draggable: true, // Marker can be dragged to a new location
+        });
+
+        // Geocoder to convert address into coordinates
+        geocoder = new google.maps.Geocoder();
+
+        // Add click listener on map to place marker and update input field
+        google.maps.event.addListener(map, "click", function(event) {
+            placeMarker(event.latLng);
+        });
+
+        // Function to place a marker and update location input field
+        function placeMarker(location) {
+            marker.setPosition(location);
+
+            // Get address from geocoder
+            geocoder.geocode({ location: location }, function(results, status) {
+                if (status === "OK") {
+                    if (results[0]) {
+                        document.getElementById("location").value = results[0].formatted_address;
+                    } else {
+                        alert("Alamat tidak ditemukan");
+                    }
+                } else {
+                    alert("Geocoder gagal: " + status);
+                }
+            });
+        }
+    }
+</script>
+{% endblock %}

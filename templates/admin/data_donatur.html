@@ -1,0 +1,44 @@
+<!-- admin/index.html -->
+{% extends 'admin/base.html' %}
+{% set title = "Ecommerce Dashboard" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-header">
+          <h4>Data Donatur</h4>
+          <div class="card-header-action">
+            <a href="#" class="btn btn-danger">View More <i class="fas fa-chevron-right"></i></a>
+          </div>
+        </div>
+        <div class="card-body p-0">
+          <div class="table-responsive">
+            <table class="table table-striped table-bordered">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Nama</th>
+                  <th>Total Donasi</th>
+                  <th>Tanggal Terakhir Donasi</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><a href="#">DDN-001</a></td>
+                  <td class="font-weight-600">Alice Green</td>
+                  <td>$500</td>
+                  <td>Nov 30, 2024</td>
+                  <td>
+                    <a href="#" class="btn btn-primary">Detail</a>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endblock %}

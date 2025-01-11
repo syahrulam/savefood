@@ -1,0 +1,18 @@
+<!-- templates/layout/base.html -->
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    {% include 'layout/head.html' %}
+</head>
+
+<body>
+    {% include 'layout/navbar.html' %}
+
+    {% block content %}
+    {% endblock %}
+
+    {% include 'layout/footer.html' %}
+</body>
+
+</html>

@@ -1,0 +1,29 @@
+<nav class="navbar navbar-expand-lg bg-white navbar-light sticky-top shadow-sm p-0 px-4 px-lg-5">
+    <a href="{{ url_for('home') }}" class="navbar-brand d-flex align-items-center">
+        <h2 class="m-0 text-primary">
+            <img class="img-fluid me-2" src="{{ url_for('static', filename='img/icon1.png') }}" alt="" style="width: 45px;">
+            SaveFood
+        </h2>
+    </a>
+    <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarCollapse">
+        <div class="navbar-nav ms-auto py-4 py-lg-0">
+            <a href="{{ url_for('home') }}" class="nav-item nav-link {% if request.endpoint == 'home' %}active{% endif %}">Home</a>
+            <a href="#kontak" class="nav-item nav-link {% if request.endpoint == 'kontak' %}active{% endif %}">Kontak</a>
+
+            <div class="nav-item dropdown">
+                <a href="#" class="nav-link dropdown-toggle {% if request.endpoint in ['donasi', 'reduce'] %}active{% endif %}" id="donaturDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    Donatur
+                </a>
+                <ul class="dropdown-menu" aria-labelledby="donaturDropdown">
+                    <li><a href="{{ url_for('donasi') }}" class="dropdown-item {% if request.endpoint == 'donasi' %}active{% endif %}">Donasikan Makanan</a></li>
+                    <li><a href="{{ url_for('reduce') }}" class="dropdown-item {% if request.endpoint == 'reduce' %}active{% endif %}">Reduce Makanan</a></li>
+                </ul>
+            </div>
+
+            <a href="{{ url_for('penerima') }}" class="nav-item nav-link {% if request.endpoint == 'penerima' %}active{% endif %}">Daftar Penerima</a>
+        </div>
+    </div>
+</nav>
