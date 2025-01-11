@@ -103,7 +103,7 @@ h6,
     top: 0;
     transition: top 0.5s, background-color 0.5s;
     background-color: #ffffff;
-    z-index: 100000;
+    z-index: 1030;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
@@ -192,11 +192,11 @@ h6,
 }
 
 
+/*** Service ***/
 .service-item {
     position: relative;
-    z-index: 1; /* Tetapkan z-index yang lebih rendah dari navbar */
+    overflow: hidden;
 }
-
 
 .service-item::after {
     position: absolute;
