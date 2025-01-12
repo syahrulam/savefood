@@ -100,11 +100,8 @@ h6,
 
 /*** Navbar ***/
 .navbar.sticky-top {
-    top: 0;
-    transition: top 0.5s, background-color 0.5s;
-    background-color: #ffffff;
-    z-index: 1030;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    top: -100px;
+    transition: .5s;
 }
 
 .navbar .navbar-brand {
@@ -114,9 +111,9 @@ h6,
 .navbar .navbar-nav .nav-link {
     margin-right: 30px;
     padding: 25px 0;
-    color: #000;
+    color: var(--dark);
     font-weight: 500;
-    transition: color 0.3s ease-in-out;
+    outline: none;
 }
 
 .navbar .navbar-nav .nav-link:hover,
@@ -133,35 +130,8 @@ h6,
     margin-left: 8px;
 }
 
-.navbar .nav-item .dropdown-menu {
-    background-color: #ffffff;
-    border-radius: 5px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    opacity: 0;
-    visibility: hidden;
-    transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
-    transform: translateY(-10px);
-}
-
-.navbar .nav-item:hover .dropdown-menu {
-    opacity: 1;
-    visibility: visible;
-    transform: translateY(0);
-}
-
-.navbar .dropdown-item {
-    color: #000;
-    padding: 10px 20px;
-    transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
-}
-
-.navbar .dropdown-item:hover {
-    background-color: var(--primary);
-    color: #ffffff;
-}
-
 @media (max-width: 991.98px) {
-    .navbar .navbar-nav .nav-link {
+    .navbar .navbar-nav .nav-link  {
         margin-right: 0;
         padding: 10px 0;
     }
@@ -169,20 +139,30 @@ h6,
     .navbar .navbar-nav {
         border-top: 1px solid #EEEEEE;
     }
+}
 
-    .navbar .dropdown-menu {
-        position: relative;
-        top: 0;
-        opacity: 1;
+@media (min-width: 992px) {
+    .navbar .nav-item .dropdown-menu {
+        display: block;
+        border: none;
+        margin-top: 0;
+        top: 150%;
+        opacity: 0;
+        visibility: hidden;
+        transition: .5s;
+    }
+
+    .navbar .nav-item:hover .dropdown-menu {
+        top: 100%;
         visibility: visible;
+        transition: .5s;
+        opacity: 1;
     }
 }
 
-.navbar.scrolled {
-    background-color: #ffffff;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    height: 60px;
-    transition: all 0.3s ease-in-out;
+.navbar .btn:hover {
+    color: #FFFFFF !important;
+    background: var(--primary) !important;
 }
 
 

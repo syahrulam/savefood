@@ -1,6 +1,5 @@
-<!-- admin/index.html -->
 {% extends 'admin/base.html' %}
-{% set title = "Ecommerce Dashboard" %}
+{% set title = "Admin Dashboard" %}
 
 {% block content %}
 <div class="row">
@@ -18,27 +17,95 @@
               <thead>
                 <tr>
                   <th>ID</th>
-                  <th>Nama</th>
+                  <th>Nama Donatur</th>
+                  <th>Nomor Telepon</th>
+                  <th>Jenis Makanan</th>
+                  <th>Jumlah Porsi</th>
+                  <th>Tanggal Kedaluwarsa</th>
+                  <th>Lokasi Donatur</th>
+                  <th>Tujuan Donatur</th>
+                  <th>Dokumen Verifikasi</th>
                   <th>Status</th>
                   <th>Tanggal Donasi</th>
                   <th>Action</th>
                 </tr>
               </thead>
               <tbody>
+                {% for donasi in donasi_list %}
                 <tr>
-                  <td><a href="#">DNT-001</a></td>
-                  <td class="font-weight-600">John Doe</td>
-                  <td><div class="badge badge-success">Active</div></td>
-                  <td>Dec 18, 2024</td>
+                  <td>{{ loop.index }}</td>
+                  <td class="font-weight-600">{{ donasi.nama_donatur }}</td>
+                  <td>{{ donasi.nomor_telp }}</td>
+                  <td>{{ donasi.jenis_makanan }}</td>
+                  <td>{{ donasi.jumlah_porsi }}</td>
+                  <td>{{ donasi.tanggal_kedaluwarsa }}</td>
+                  <td>{{ donasi.lokasi_donatur }}</td>
+                  <td>{{ donasi.tujuan }}</td>
                   <td>
-                    <a href="#" class="btn btn-primary">Detail</a>
+                    {% if donasi.file_identitas %}
+                      <!-- Tombol untuk membuka modal -->
+                      <button type="button" class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#modalDokumen{{ donasi.id }}">
+                        Lihat Dokumen
+                      </button>
+                      
+                      <!-- Modal -->
+                      <div class="modal fade" id="modalDokumen{{ donasi.id }}" tabindex="-1" aria-labelledby="modalDokumenLabel{{ donasi.id }}" aria-hidden="true">
+                        <div class="modal-dialog modal-lg">
+                          <div class="modal-content">
+                            <div class="modal-header">
+                              <h5 class="modal-title" id="modalDokumenLabel{{ donasi.id }}">Dokumen Verifikasi - {{ donasi.nama_donatur }}</h5>
+                              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body text-center">
+                              <img src="{{ url_for('static', filename=donasi.file_identitas) }}" 
+     alt="Dokumen {{ donasi.nama_donatur }}" 
+     class="img-fluid rounded">
+
+
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    {% else %}
+                      <span class="text-muted">Tidak Ada Dokumen</span>
+                    {% endif %}
                   </td>
+                  <td>
+                    <div class="badge 
+                      {% if donasi.status == 'pending' %}
+                        badge-warning
+                      {% elif donasi.status == 'approved' %}
+                        badge-success
+                      {% else %}
+                        badge-danger
+                      {% endif %}
+                    ">
+                      {{ donasi.status }}
+                    </div>
+                  </td>
+                  <td>{{ donasi.tanggal_donasi }}</td>
+                  <td>
+                    <form action="{{ url_for('approve_donatur', id=donasi.id) }}" method="POST" style="display:inline-block;">
+                        <button type="submit" class="btn btn-success btn-sm" 
+                                {% if donasi.status == 'approved' %} disabled {% endif %}>
+                            Approve
+                        </button>
+                    </form>
+                    <form action="{{ url_for('reject_donatur', id=donasi.id) }}" method="POST" style="display:inline-block;">
+                        <button type="submit" class="btn btn-danger btn-sm" 
+                                {% if donasi.status == 'rejected' %} disabled {% endif %}>
+                            Reject
+                        </button>
+                    </form>
+                </td>
+                
                 </tr>
+                {% endfor %}
               </tbody>
             </table>
           </div>
         </div>
       </div>
     </div>
-  </div>
-  {% endblock %}
+</div>
+{% endblock %}

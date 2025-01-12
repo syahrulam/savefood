@@ -1,6 +1,5 @@
-<!-- admin/index.html -->
 {% extends 'admin/base.html' %}
-{% set title = "Ecommerce Dashboard" %}
+{% set title = "Data Donatur" %}
 
 {% block content %}
 <div class="row">
@@ -8,37 +7,59 @@
       <div class="card">
         <div class="card-header">
           <h4>Data Donatur</h4>
-          <div class="card-header-action">
-            <a href="#" class="btn btn-danger">View More <i class="fas fa-chevron-right"></i></a>
-          </div>
         </div>
         <div class="card-body p-0">
           <div class="table-responsive">
             <table class="table table-striped table-bordered">
               <thead>
                 <tr>
-                  <th>ID</th>
-                  <th>Nama</th>
-                  <th>Total Donasi</th>
-                  <th>Tanggal Terakhir Donasi</th>
-                  <th>Action</th>
+                  <th>#</th>
+                  <th>Nama Donatur</th>
+                  <th>Nomor Telepon</th>
+                  <th>File Identitas</th>
+                  <th>Detail Porsi per Jenis</th>
+                  <th>Total Donasikan</th>
+                  <th>Total Daur Ulang</th>
+                  <th>Total Porsi</th>
+                  <th>Aksi</th>
                 </tr>
               </thead>
               <tbody>
-                <tr>
-                  <td><a href="#">DDN-001</a></td>
-                  <td class="font-weight-600">Alice Green</td>
-                  <td>$500</td>
-                  <td>Nov 30, 2024</td>
-                  <td>
-                    <a href="#" class="btn btn-primary">Detail</a>
-                  </td>
-                </tr>
+                {% if grouped_data %}
+                  {% for nama_donatur, data in grouped_data.items() %}
+                  <tr>
+                    <td>{{ loop.index }}</td>
+                    <td>{{ nama_donatur }}</td>
+                    <td>{{ data.nomor_telp }}</td>
+                    <td>
+                      {% if data.file_identitas %}
+                        <a href="{{ url_for('static', filename=data.file_identitas) }}" target="_blank">Lihat File</a>
+                      {% else %}
+                        <span class="text-muted">Tidak Ada</span>
+                      {% endif %}
+                    </td>
+                    <td>
+                      <ul>
+                        {% for jenis in data.jenis_makanan %}
+                        <li>{{ jenis.jenis }} ({{ jenis.tujuan }}): {{ jenis.total_porsi }} porsi</li>
+                        {% endfor %}
+                      </ul>
+                    </td>
+                    <td>{{ data.donasikan }}</td>
+                    <td>{{ data.daur_ulang }}</td>
+                    <td>{{ data.total_porsi }}</td>
+                  </tr>
+                  {% endfor %}
+                {% else %}
+                  <tr>
+                    <td colspan="8" class="text-center">Tidak ada data donatur ditemukan.</td>
+                  </tr>
+                {% endif %}
               </tbody>
             </table>
           </div>
         </div>
       </div>
     </div>
-  </div>
-  {% endblock %}
+</div>
+{% endblock %}

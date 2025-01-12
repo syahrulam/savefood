@@ -9,37 +9,67 @@
         </div>
 
         <!-- Form Penerima -->
-        <form id="penerimaForm" class="bg-light p-4 rounded shadow-sm">
+        <form id="penerimaForm" class="bg-light p-4 rounded shadow-sm" method="POST" action="/penerima" enctype="multipart/form-data">
             <h4 class="mb-3 fw-bold text-secondary">Formulir Penerima Donasi</h4>
             <div class="row g-4">
                 <!-- Nama Penerima -->
                 <div class="col-md-6">
                     <label for="recipientName" class="form-label">Nama Penerima</label>
-                    <input type="text" class="form-control rounded-pill" id="recipientName" placeholder="Masukkan nama Anda" required>
+                    <input type="text" class="form-control rounded-pill" id="recipientName" name="recipientName" placeholder="Masukkan nama Anda" required>
                 </div>
 
                 <!-- Kontak Penerima -->
                 <div class="col-md-6">
                     <label for="recipientContact" class="form-label">Nomor Telepon</label>
-                    <input type="tel" class="form-control rounded-pill" id="recipientContact" placeholder="Masukkan nomor telepon Anda" required>
+                    <input type="tel" class="form-control rounded-pill" id="recipientContact" name="recipientContact" placeholder="Masukkan nomor telepon Anda" required>
                 </div>
 
                 <!-- Alamat Penerima -->
                 <div class="col-md-12">
                     <label for="recipientAddress" class="form-label">Alamat Penerima</label>
-                    <textarea class="form-control rounded" id="recipientAddress" rows="3" placeholder="Masukkan alamat lengkap Anda" required></textarea>
+                    <textarea class="form-control rounded" id="recipientAddress" name="recipientAddress" rows="3" placeholder="Masukkan alamat lengkap Anda" required></textarea>
                 </div>
 
                 <!-- Kebutuhan Makanan -->
                 <div class="col-md-6">
                     <label for="foodNeeded" class="form-label">Jenis Makanan yang Dibutuhkan</label>
-                    <input type="text" class="form-control rounded-pill" id="foodNeeded" placeholder="Makanan Berat, Makanan Ringan" required>
+                    <select class="form-control rounded-pill" id="foodNeeded" name="foodNeeded" required>
+                        <option value="" disabled selected>Pilih jenis makanan</option>
+                        <option value="Makanan Berat">Makanan Berat</option>
+                        <option value="Jajanan">Jajanan</option>
+                        <option value="Minuman">Minuman</option>
+                    </select>
                 </div>
 
+                <!-- Jenis Penerima -->
+                <div class="col-md-6">
+                    <label for="recipientType" class="form-label">Jenis Penerima</label>
+                    <select class="form-control rounded-pill" id="recipientType" name="recipientType" required>
+                        <option value="" disabled selected>Pilih jenis penerima</option>
+                        <option value="Perorangan">Perorangan</option>
+                        <option value="Yayasan">Yayasan</option>
+                        <option value="Lainnya">Lainnya</option>
+                    </select>
+                </div>
+
+                <div class="col-md-6" id="otherRecipientField" style="display: none;">
+                    <label for="otherRecipientDescription" class="form-label">Keterangan Jenis Penerima</label>
+                    <input type="text" class="form-control rounded-pill" id="otherRecipientDescription" name="keterangan_penerima" placeholder="Tuliskan jenis penerima lainnya">
+                </div>
+                
                 <!-- Jumlah Kebutuhan -->
                 <div class="col-md-6">
                     <label for="foodQuantity" class="form-label">Jumlah Porsi yang Dibutuhkan</label>
-                    <input type="number" class="form-control rounded-pill" id="foodQuantity" placeholder="Masukkan jumlah porsi" required>
+                    <input type="number" class="form-control rounded-pill" id="foodQuantity" name="foodQuantity" placeholder="Masukkan jumlah porsi" required>
+                </div>
+            </div>
+            
+            <!-- Unggah File Identitas -->
+            <div class="row g-4 mt-3">
+                <div class="col-md-12">
+                    <label for="identityFile" class="form-label">Unggah Identitas (KTP/SIM)</label>
+                    <input type="file" class="form-control rounded-pill" id="identityFile" name="file_identitas" accept=".jpg, .jpeg, .png, .pdf" required>
+                    <small class="form-text text-muted">Format file yang diizinkan: JPG, PNG, PDF. Maksimal ukuran: 2MB.</small>
                 </div>
             </div>
 
@@ -55,9 +85,25 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
-    document.getElementById("penerimaForm").addEventListener("submit", function (e) {
-        e.preventDefault();
-        alert("Formulir penerimaan donasi Anda telah diajukan. Terima kasih!");
+    document.getElementById('recipientType').addEventListener('change', function () {
+        const otherField = document.getElementById('otherRecipientField');
+        if (this.value === 'Lainnya') {
+            otherField.style.display = 'block';
+        } else {
+            otherField.style.display = 'none';
+        }
+    });
+</script>
+<script>
+    document.getElementById('identityFile').addEventListener('change', function () {
+        const file = this.files[0];
+        if (file) {
+            const maxSize = 2 * 1024 * 1024;
+            if (file.size > maxSize) {
+                alert('Ukuran file terlalu besar! Maksimal 2MB.');
+                this.value = '';
+            }
+        }
     });
 </script>
 {% endblock %}

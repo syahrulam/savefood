@@ -1,44 +1,108 @@
-<!-- admin/index.html -->
 {% extends 'admin/base.html' %}
-{% set title = "Ecommerce Dashboard" %}
+{% set title = "Admin Dashboard" %}
 
 {% block content %}
 <div class="row">
     <div class="col-12">
-      <div class="card">
-        <div class="card-header">
-          <h4>Penerima</h4>
-          <div class="card-header-action">
-            <a href="#" class="btn btn-danger">View More <i class="fas fa-chevron-right"></i></a>
-          </div>
+        <div class="card">
+            <div class="card-header">
+                <h4>Penerima</h4>
+                <div class="card-header-action">
+                    <a href="#" class="btn btn-danger">View More <i class="fas fa-chevron-right"></i></a>
+                </div>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-striped table-bordered">
+                        <thead>
+                            <tr>
+                                <th>No</th>
+                                <th>Nama Penerima</th>
+                                <th>Kontak</th>
+                                <th>Alamat</th>
+                                <th>Jenis Makanan</th>
+                                <th>Jenis Penerima</th>
+                                <th>Jumlah Porsi</th>
+                                <th>Dokumen Verifikasi</th>
+                                <th>Status</th>
+                                <th>Tanggal Pengajuan</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for penerima in penerima_list %}
+                            <tr>
+                                <td>{{ loop.index }}</td>
+                                <td>{{ penerima.nama_penerima }}</td>
+                                <td>{{ penerima.kontak_penerima }}</td>
+                                <td>{{ penerima.alamat_penerima }}</td>
+                                <td>{{ penerima.jenis_makanan_dibutuhkan }}</td>
+                                <td>
+                                    {{ penerima.jenis_penerima }}
+                                    {% if penerima.jenis_penerima == 'Lainnya' %}
+                                    <br><small class="text-muted">{{ penerima.keterangan_penerima }}</small>
+                                    {% endif %}
+                                </td>
+                                <td>{{ penerima.jumlah_kebutuhan }}</td>
+                                <td>
+                                    {% if penerima.file_identitas %}
+                                    <!-- Tombol untuk membuka modal -->
+                                    <button type="button" class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#modalDokumen{{ penerima.id }}">
+                                        Lihat Dokumen
+                                    </button>
+                                    
+                                    <!-- Modal -->
+                                    <div class="modal fade" id="modalDokumen{{ penerima.id }}" tabindex="-1" aria-labelledby="modalDokumenLabel{{ penerima.id }}" aria-hidden="true">
+                                        <div class="modal-dialog modal-lg">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="modalDokumenLabel{{ penerima.id }}">Dokumen Verifikasi - {{ penerima.nama_penerima }}</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body text-center">
+                                                    <img src="{{ url_for('static', filename=penerima.file_identitas) }}" 
+                                                         alt="Dokumen {{ penerima.nama_penerima }}" 
+                                                         class="img-fluid rounded">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {% else %}
+                                    <span class="text-muted">Tidak Ada Dokumen</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <div class="badge 
+                                        {% if penerima.status == 'pending' %} badge-warning 
+                                        {% elif penerima.status == 'approved' %} badge-success 
+                                        {% else %} badge-danger 
+                                        {% endif %}
+                                    ">
+                                        {{ penerima.status }}
+                                    </div>
+                                </td>
+                                <td>{{ penerima.tanggal_pengajuan.strftime('%d %b %Y, %H:%M') }}</td>
+                                <td>
+                                    <form action="{{ url_for('approve_penerima', id=penerima.id) }}" method="POST" style="display:inline-block;">
+                                        <button type="submit" class="btn btn-success btn-sm" 
+                                                {% if penerima.status == 'approved' %} disabled {% endif %}>
+                                            Approve
+                                        </button>
+                                    </form>
+                                    <form action="{{ url_for('reject_penerima', id=penerima.id) }}" method="POST" style="display:inline-block;">
+                                        <button type="submit" class="btn btn-danger btn-sm" 
+                                                {% if penerima.status == 'rejected' %} disabled {% endif %}>
+                                            Reject
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
-        <div class="card-body p-0">
-          <div class="table-responsive">
-            <table class="table table-striped table-bordered">
-              <thead>
-                <tr>
-                  <th>ID</th>
-                  <th>Nama</th>
-                  <th>Status</th>
-                  <th>Tanggal Penerimaan</th>
-                  <th>Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td><a href="#">PNR-001</a></td>
-                  <td class="font-weight-600">Jane Smith</td>
-                  <td><div class="badge badge-warning">Pending</div></td>
-                  <td>Dec 15, 2024</td>
-                  <td>
-                    <a href="#" class="btn btn-primary">Detail</a>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
     </div>
-  </div>
-  {% endblock %}
+</div>
+{% endblock %}

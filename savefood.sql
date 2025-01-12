@@ -27,16 +27,56 @@ SET time_zone = "+00:00";
 -- Table structure for table `penjual`
 --
 
-CREATE TABLE `penjual` (
-  `id` int(11) NOT NULL,
-  `user_id` int(11) NOT NULL,
-  `nama_owner` varchar(100) NOT NULL,
-  `nama_usaha` varchar(100) NOT NULL,
-  `alamat_usaha` text NOT NULL,
-  `nomor_wa` varchar(15) NOT NULL,
-  `status` enum('pending','approved','declined') NOT NULL DEFAULT 'pending',
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+-- Tabel Donasi
+CREATE TABLE donasi (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nama_donatur VARCHAR(255) NOT NULL,
+    nomor_telp VARCHAR(20) NOT NULL,
+    nama_tempat VARCHAR(255) NOT NULL,
+    jenis_makanan VARCHAR(255) NOT NULL,
+    jumlah_porsi INT NOT NULL,
+    tanggal_kedaluwarsa DATE NOT NULL,
+    lokasi_donatur VARCHAR(255) NOT NULL,
+    deskripsi_tambahan TEXT
+);
+
+-- Tabel Penerima
+CREATE TABLE penerima (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nama_penerima VARCHAR(255) NOT NULL,
+    nomor_telepon VARCHAR(20) NOT NULL,
+    alamat_penerima TEXT NOT NULL,
+    jenis_makanan_dibutuhkan VARCHAR(255) NOT NULL,
+    jumlah_porsi_dibutuhkan INT NOT NULL,
+    jenis_penerima ENUM('Perorangan', 'Yayasan', 'Lainnya') NOT NULL,
+    keterangan_penerima TEXT
+);
+
+-- Tabel Daur Ulang
+CREATE TABLE daur_ulang (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nama_donatur VARCHAR(255) NOT NULL,
+    nomor_telp VARCHAR(20) NOT NULL,
+    nama_tempat VARCHAR(255) NOT NULL,
+    jenis_makanan VARCHAR(255) NOT NULL,
+    jumlah_porsi INT NOT NULL,
+    tanggal_kedaluwarsa DATE NOT NULL,
+    lokasi_donatur VARCHAR(255) NOT NULL,
+    deskripsi_tambahan TEXT
+);
+
+-- Tabel Distribusi
+CREATE TABLE distribusi (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    id_donasi INT NOT NULL,
+    id_penerima INT,
+    id_daur_ulang INT,
+    tanggal_distribusi DATE NOT NULL,
+    status ENUM('pending', 'selesai') DEFAULT 'pending',
+    FOREIGN KEY (id_donasi) REFERENCES donasi(id),
+    FOREIGN KEY (id_penerima) REFERENCES penerima(id),
+    FOREIGN KEY (id_daur_ulang) REFERENCES daur_ulang(id)
+);
 
 -- --------------------------------------------------------
 

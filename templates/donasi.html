@@ -8,148 +8,71 @@
             <p class="text-secondary fs-5">Berikan Makanan Berlebih Anda Kepada Mereka yang Membutuhkan.</p>
         </div>
 
-        <!-- Form Donasi -->
-        <form id="donasiForm" class="bg-light p-4 rounded shadow-sm">
+        <form id="donasiForm" class="bg-light p-4 rounded shadow-sm" method="POST" action="/donasi" enctype="multipart/form-data">
             <h4 class="mb-3 fw-bold text-secondary">Formulir Donasi Makanan</h4>
             <div class="row g-4">
-                <!-- Nama Tempat -->
+                <!-- Nama Donatur -->
                 <div class="col-md-6">
-                    <label for="placeName" class="form-label">Nama Donatur</label>
-                    <input type="text" class="form-control rounded-pill" id="placeName" placeholder="Masukkan nama donatur" required>
+                    <label for="donaturName" class="form-label">Nama Donatur</label>
+                    <input type="text" class="form-control rounded-pill" id="donaturName" name="donaturName" placeholder="Masukkan nama donatur" required>
                 </div>
-                <!-- Nama Tempat -->
+                <!-- Nomor Telepon -->
                 <div class="col-md-6">
-                    <label for="placeName" class="form-label">Nomor Telp/WA</label>
-                    <input type="text" class="form-control rounded-pill" id="placeName" placeholder="Masukkan no Telp/WA" required>
+                    <label for="phoneNumber" class="form-label">Nomor Telepon</label>
+                    <input type="text" class="form-control rounded-pill" id="phoneNumber" name="phoneNumber" placeholder="Masukkan nomor telepon" required>
                 </div>
                 <!-- Nama Tempat -->
                 <div class="col-md-6">
                     <label for="placeName" class="form-label">Nama Tempat</label>
-                    <input type="text" class="form-control rounded-pill" id="placeName" placeholder="Masukkan nama tempat" required>
+                    <input type="text" class="form-control rounded-pill" id="placeName" name="placeName" placeholder="Masukkan nama tempat" required>
                 </div>
-
                 <!-- Jenis Makanan -->
                 <div class="col-md-6">
                     <label for="foodType" class="form-label">Jenis Makanan</label>
-                    <input type="text" class="form-control rounded-pill" id="foodType" placeholder="Contoh: Nasi Kotak" required>
+                    <select class="form-control rounded-pill" id="foodType" name="foodType" required>
+                        <option value="" disabled selected>Pilih jenis makanan</option>
+                        <option value="Makanan Berat">Makanan Berat</option>
+                        <option value="Jajanan">Jajanan</option>
+                        <option value="Minuman">Minuman</option>
+                    </select>
                 </div>
-
                 <!-- Jumlah Porsi -->
                 <div class="col-md-6">
                     <label for="quantity" class="form-label">Jumlah Porsi</label>
-                    <input type="number" class="form-control rounded-pill" id="quantity" placeholder="Masukkan jumlah porsi" required>
+                    <input type="number" class="form-control rounded-pill" id="quantity" name="quantity" placeholder="Masukkan jumlah porsi" required>
                 </div>
-
                 <!-- Tanggal Kedaluwarsa -->
                 <div class="col-md-6">
                     <label for="expiryDate" class="form-label">Tanggal Kedaluwarsa</label>
-                    <input type="date" class="form-control rounded-pill" id="expiryDate" required>
+                    <input type="date" class="form-control rounded-pill" id="expiryDate" name="expiryDate" required>
                 </div>
-
                 <!-- Lokasi Donatur -->
                 <div class="col-md-12">
-                    <label for="location" class="form-label">Lokasi Donatur</label>
-                    <input type="text" class="form-control rounded-pill bg-white" id="location" placeholder="Pilih lokasi di peta" required readonly>
-                    <small class="form-text text-muted">Klik peta untuk memilih lokasi.</small>
+                    <label for="donorLocation" class="form-label">Lokasi Donatur</label>
+                    <input type="text" class="form-control rounded-pill bg-white" id="donorLocation" name="location" placeholder="Pilih lokasi di peta" required>
                 </div>
-
+                <!-- Tujuan Donatur -->
+                <div class="col-md-6">
+                    <label for="tujuan" class="form-label">Tujuan Donatur</label>
+                    <select class="form-control rounded-pill" id="tujuan" name="tujuan" required readonly>
+                        <option value="Donasikan">Donasikan</option>
+                    </select>
+                </div>
+                <!-- File Identitas -->
+                <div class="col-md-6">
+                    <label for="file_identitas" class="form-label">Unggah File Identitas</label>
+                    <input type="file" class="form-control" id="file_identitas" name="file_identitas" accept=".jpg, .jpeg, .png, .pdf" required>
+                </div>
                 <!-- Deskripsi Tambahan -->
                 <div class="col-md-12">
                     <label for="description" class="form-label">Deskripsi Tambahan</label>
-                    <textarea class="form-control rounded" id="description" rows="3" placeholder="Tambahkan informasi tambahan (opsional)"></textarea>
+                    <textarea class="form-control rounded" id="description" name="description" rows="3" placeholder="Tambahkan informasi tambahan (opsional)"></textarea>
                 </div>
             </div>
-
-            <!-- Tombol Kirim -->
             <div class="mt-4 text-center">
                 <button type="submit" class="btn btn-success px-5 py-2 rounded-pill fw-bold">Ajukan Donasi</button>
             </div>
         </form>
     </div>
 </div>
-
-<div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content shadow-sm">
-            <!-- Header -->
-            <div class="modal-header bg-primary text-white justify-content-center">
-                <h5 class="modal-title fw-bold" id="loginModalLabel">Kelayakan Makanan</h5>
-            </div>
-
-            <!-- Body -->
-            <div class="modal-body text-center">
-                <p class="text-secondary mb-4">Pastikan Makanan Masih Layak Konsumsi!</p>
-                <!-- Tombol YA -->
-                <button type="button" class="btn btn-success px-4 rounded-pill fw-bold me-2" id="btnLayak" data-bs-dismiss="modal">
-                    Ya, Layak
-                </button>
-                <!-- Tombol TIDAK -->
-                <button type="button" class="btn btn-outline-secondary px-4 rounded-pill fw-bold" id="btnTidakLayak">
-                    Tidak Layak
-                </button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Bootstrap JS (Pastikan Terhubung) -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-
-<!-- Script Logika Tombol -->
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        // Tombol "Tidak Layak" - Arahkan ke halaman reduce
-        document.getElementById("btnTidakLayak").addEventListener("click", function () {
-            window.location.href = "/reduce"; // Ganti "/reduce" sesuai URL tujuan
-        });
-
-        // Tombol "Ya, Layak" - Tutup modal secara otomatis
-        document.getElementById("btnLayak").addEventListener("click", function () {
-            var modal = bootstrap.Modal.getInstance(document.getElementById('loginModal'));
-            modal.hide();
-        });
-    });
-</script>
-
-<!-- Google Maps API untuk Lokasi -->
-<script src="https://maps.googleapis.com/maps/api/js?key=YOUR_GOOGLE_MAPS_API_KEY&callback=initMap" async defer></script>
-
-<!-- jQuery -->
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
-<!-- Bootstrap JS -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-
-<!-- Leaflet -->
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        var loginModal = new bootstrap.Modal(document.getElementById('loginModal'), {
-            backdrop: 'static',
-            keyboard: false
-        });
-        loginModal.show();
-    });
-
-    let map, marker;
-
-    function initMap() {
-        map = new google.maps.Map(document.getElementById("location"), {
-            center: { lat: -6.8743, lng: 109.1814 },
-            zoom: 13,
-        });
-
-        marker = new google.maps.Marker({
-            position: { lat: -6.8743, lng: 109.1814 },
-            map: map,
-            draggable: true,
-        });
-
-        google.maps.event.addListener(map, "click", function (event) {
-            marker.setPosition(event.latLng);
-            document.getElementById("location").value = `${event.latLng.lat()}, ${event.latLng.lng()}`;
-        });
-    }
-</script>
 {% endblock %}
