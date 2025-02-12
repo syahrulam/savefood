@@ -15,6 +15,7 @@ class Donasi(db.Model):
     deskripsi_tambahan = db.Column(db.Text, nullable=True)
     tujuan = db.Column(db.String(255), nullable=False)
     file_identitas = db.Column(db.String(255), nullable=True)  # Kolom baru
+    file_bukti = db.Column(db.String(255), nullable=True)  # Kolom baru
     status = db.Column(db.Enum('pending', 'approved', 'rejected'), default='pending', nullable=False)
     tanggal_donasi = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
 

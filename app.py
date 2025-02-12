@@ -10,6 +10,13 @@ from extensions import db
 from models import Donasi, Penerima, User
 import sys
 import os
+import pandas as pd
+import numpy as np
+from helpers import match_donations
+from sqlalchemy.sql import text
+from sklearn.feature_extraction.text import CountVectorizer
+from math import radians, sin, cos, sqrt, atan2
+from sklearn.metrics.pairwise import cosine_similarity
 from functools import wraps
 
 # Tambahkan path proyek secara manual
@@ -304,11 +311,61 @@ def penerima():
 
 #---------------------------------------- Admin Dashboard --------------------------------
 # Halaman Admin Dashboard
-@app.route('/admin', endpoint='admin')
-@admin_required
-def admin():
-    return render_template('admin/index.html')
+@app.route('/admin')
+def admin_dashboard():
+    # Hitung jumlah donatur yang approved
+    jumlah_donatur = Donasi.query.filter_by(status='approved').count()
+    
+    # Hitung jumlah penerima yang approved
+    jumlah_penerima = Penerima.query.filter_by(status='approved').count()
+    
+    # Hitung total makanan yang tersalurkan (contoh: jumlah porsi dari donasi yang approved)
+    total_tersalurkan = db.session.query(db.func.sum(Donasi.jumlah_porsi)).filter_by(status='approved').scalar() or 0
+    
+    # Data untuk grafik donatur
+    donatur_data = {
+        'labels': ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+        'datasets': [{
+            'label': 'Donatur',
+            'data': [10, 20, 30, 40, 50, 60, 70],  # Contoh data, ganti dengan data sebenarnya
+            'borderColor': 'rgba(75, 192, 192, 1)',
+            'backgroundColor': 'rgba(75, 192, 192, 0.2)',
+            'borderWidth': 2,
+            'fill': True
+        }]
+    }
+    
+    # Data untuk grafik penerima
+    penerima_data = {
+        'labels': ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+        'datasets': [{
+            'label': 'Penerima',
+            'data': [5, 15, 25, 35, 45, 55, 65],  # Contoh data, ganti dengan data sebenarnya
+            'backgroundColor': 'rgba(255, 99, 132, 0.2)',
+            'borderColor': 'rgba(255, 99, 132, 1)',
+            'borderWidth': 2
+        }]
+    }
 
+    total_tersalurkan_data = {
+        'labels': ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+        'datasets': [{
+            'label': 'Total Tersalurkan',
+            'data': [5, 15, 25, 35, 45, 55, 65],  # Contoh data, ganti dengan data sebenarnya
+            'backgroundColor': 'rgba(255, 99, 132, 0.2)',
+            'borderColor': 'rgba(255, 99, 132, 1)',
+            'borderWidth': 2
+        }]
+    }
+    
+    return render_template('admin/index.html', 
+                           jumlah_donatur=jumlah_donatur, 
+                           jumlah_penerima=jumlah_penerima, 
+                           total_tersalurkan=total_tersalurkan,
+                           donatur_data=donatur_data,
+                           penerima_data=penerima_data,
+                           total_tersalurkan_data=total_tersalurkan_data)
+                           
 @app.route('/profile')
 @login_required
 def profile():
@@ -567,6 +624,109 @@ def data_penerima():
 def data_pengelola():
     return render_template('admin/data_pengelola.html')
 
+#--------------------------------------------- PENYERAHAN --------------------------------
+def haversine(lat1, lon1, lat2, lon2):
+    """
+    Menghitung jarak Haversine antara dua koordinat (latitude, longitude).
+    Hasil dalam kilometer.
+    """
+    R = 6371  # Radius bumi dalam kilometer
+    lat1, lon1, lat2, lon2 = map(radians, [lat1, lon1, lat2, lon2])  # Konversi ke radian
+    
+    dlat = lat2 - lat1
+    dlon = lon2 - lon1
+    a = sin(dlat/2)**2 + cos(lat1) * cos(lat2) * sin(dlon/2)**2
+    c = 2 * atan2(sqrt(a), sqrt(1 - a))
+    
+    return R * c
+
+def match_donations(donasi_data, penerima_data):
+    results = []
+
+    for _, donasi in donasi_data.iterrows():
+        donatur_lat, donatur_lon = map(float, donasi['lokasi_donatur'].split(', '))
+        
+        for _, penerima in penerima_data.iterrows():
+            penerima_lat, penerima_lon = map(float, penerima['alamat_penerima'].split(', '))
+
+            # Cek jenis makanan
+            if donasi['jenis_makanan'].lower() == penerima['jenis_makanan_dibutuhkan'].lower():
+                
+                # Hitung jarak geografis dengan Haversine
+                distance_km = haversine(donatur_lat, donatur_lon, penerima_lat, penerima_lon)
+
+                # Normalisasi jarak agar bernilai antara 0-1 (semakin kecil jarak, semakin besar nilai)
+                max_distance = 50  # Misalnya 50 km sebagai batas maksimum relevansi
+                location_similarity = max(0, 1 - (distance_km / max_distance))
+
+                # Similarity jumlah porsi
+                jumlah_similarity = min(donasi['jumlah_porsi'], penerima['jumlah_kebutuhan']) / max(donasi['jumlah_porsi'], penerima['jumlah_kebutuhan'])
+
+                # Hitung total skor kecocokan
+                total_similarity = (0.5 * location_similarity) + (0.3 * jumlah_similarity) + 0.2
+
+                results.append({
+                    'nama_donatur': donasi['nama_donatur'],
+                    'nama_penerima': penerima['nama_penerima'],
+                    'jenis_makanan': donasi['jenis_makanan'],
+                    'jumlah_porsi': donasi['jumlah_porsi'],
+                    'jumlah_kebutuhan': penerima['jumlah_kebutuhan'],
+                    'lokasi_donatur': donasi['lokasi_donatur'],
+                    'alamat_penerima': penerima['alamat_penerima'],
+                    'jarak_km': round(distance_km, 2),
+                    'similarity': total_similarity
+                })
+
+    # Urutkan hasil berdasarkan similarity (dari yang paling cocok)
+    results = sorted(results, key=lambda x: x['similarity'], reverse=True)
+    return results
+
+@app.route('/penyerahan', endpoint='penyerahan')
+@admin_required
+def penyerahan():
+    try:
+        # Ambil data donasi dari database
+        donasi_query = text("""
+            SELECT id, nama_donatur, jenis_makanan, jumlah_porsi, lokasi_donatur
+            FROM donasi
+            WHERE status = 'approved'
+        """)
+        donasi_result = db.session.execute(donasi_query)
+        donasi_data = pd.DataFrame(donasi_result.fetchall(), columns=['id', 'nama_donatur', 'jenis_makanan', 'jumlah_porsi', 'lokasi_donatur'])
+
+        # Ambil data penerima dari database
+        penerima_query = text("""
+            SELECT id, nama_penerima, kontak_penerima, alamat_penerima, jenis_makanan_dibutuhkan, jumlah_kebutuhan
+            FROM penerima
+            WHERE status = 'approved'
+        """)
+        penerima_result = db.session.execute(penerima_query)
+        penerima_data = pd.DataFrame(penerima_result.fetchall(), columns=['id', 'nama_penerima', 'kontak_penerima', 'alamat_penerima', 'jenis_makanan_dibutuhkan', 'jumlah_kebutuhan'])
+
+        # Gunakan fungsi match_donations untuk mencocokkan data
+        hasil_pencocokan = match_donations(donasi_data, penerima_data)
+
+        # Tambahkan kontak penerima ke dalam hasil pencocokan
+        for row in hasil_pencocokan:
+            # Temukan penerima dengan nama yang sesuai
+            penerima_info = penerima_data[penerima_data['nama_penerima'] == row['nama_penerima']]
+            if not penerima_info.empty:
+                row['kontak_penerima'] = penerima_info.iloc[0]['kontak_penerima']
+
+            # Siapkan pesan WhatsApp
+            row['message'] = (
+                f"Halo {row['nama_penerima']}, kami dari Savefood ingin menyalurkan donasi "
+                f"dari Sdr. {row['nama_donatur']} berupa {row['jenis_makanan']} sejumlah "
+                f"{row['jumlah_kebutuhan']} porsi. Mohon segera merespon pesan ini."
+            )
+
+        # Kirim data ke template
+        return render_template('admin/penyerahan.html', hasil_pencocokan=hasil_pencocokan)
+    
+    except Exception as e:
+        # Jika terjadi kesalahan, tampilkan pesan error
+        error_message = f"Terjadi kesalahan: {e}"
+        return render_template('admin/penyerahan.html', hasil_pencocokan=[], error_message=error_message)
 
 #-------------------------------------------- Master Data END ---------------------------------
 

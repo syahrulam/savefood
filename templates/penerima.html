@@ -27,10 +27,15 @@
                 <!-- Alamat Penerima -->
                 <div class="col-md-12">
                     <label for="recipientAddress" class="form-label">Alamat Penerima</label>
-                    <textarea class="form-control rounded" id="recipientAddress" name="recipientAddress" rows="3" placeholder="Masukkan alamat lengkap Anda" required></textarea>
+                    <input type="text" class="form-control rounded-pill bg-white" id="recipientAddress" name="recipientAddress" placeholder="Klik pada peta untuk memilih lokasi" required readonly>
                 </div>
 
-                <!-- Kebutuhan Makanan -->
+                <!-- Peta -->
+                <div class="col-md-12">
+                    <div id="map" style="height: 400px; border-radius: 10px;"></div>
+                </div>
+
+                <!-- Jenis Makanan yang Dibutuhkan -->
                 <div class="col-md-6">
                     <label for="foodNeeded" class="form-label">Jenis Makanan yang Dibutuhkan</label>
                     <select class="form-control rounded-pill" id="foodNeeded" name="foodNeeded" required>
@@ -52,6 +57,7 @@
                     </select>
                 </div>
 
+                <!-- Keterangan Jika Penerima Lainnya -->
                 <div class="col-md-6" id="otherRecipientField" style="display: none;">
                     <label for="otherRecipientDescription" class="form-label">Keterangan Jenis Penerima</label>
                     <input type="text" class="form-control rounded-pill" id="otherRecipientDescription" name="keterangan_penerima" placeholder="Tuliskan jenis penerima lainnya">
@@ -81,10 +87,54 @@
     </div>
 </div>
 
-<!-- Bootstrap JS -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+<!-- Tambahkan Leaflet.js -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
 
 <script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // Inisialisasi peta
+        var map = L.map('map').setView([-6.200000, 106.816666], 13); // Jakarta sebagai default
+        
+        // Tambahkan layer peta dari OpenStreetMap
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; OpenStreetMap contributors'
+        }).addTo(map);
+        
+        var marker;
+
+        // Fungsi untuk mendapatkan lokasi pengguna
+        map.locate({setView: true, maxZoom: 16});
+        map.on('locationfound', function(e) {
+            if (!marker) {
+                marker = L.marker(e.latlng, { draggable: true }).addTo(map)
+                    .bindPopup("Lokasi Anda").openPopup();
+                document.getElementById("recipientAddress").value = e.latlng.lat + ", " + e.latlng.lng;
+                
+                marker.on("dragend", function () {
+                    var position = marker.getLatLng();
+                    document.getElementById("recipientAddress").value = position.lat + ", " + position.lng;
+                });
+            }
+        });
+
+        // Event klik untuk menambahkan/memindahkan marker
+        map.on('click', function (e) {
+            if (!marker) {
+                marker = L.marker(e.latlng, { draggable: true }).addTo(map);
+            } else {
+                marker.setLatLng(e.latlng);
+            }
+            document.getElementById("recipientAddress").value = e.latlng.lat + ", " + e.latlng.lng;
+
+            marker.on("dragend", function () {
+                var position = marker.getLatLng();
+                document.getElementById("recipientAddress").value = position.lat + ", " + position.lng;
+            });
+        });
+    });
+
+    // Event listener untuk jenis penerima
     document.getElementById('recipientType').addEventListener('change', function () {
         const otherField = document.getElementById('otherRecipientField');
         if (this.value === 'Lainnya') {
@@ -93,8 +143,8 @@
             otherField.style.display = 'none';
         }
     });
-</script>
-<script>
+
+    // Validasi ukuran file identitas
     document.getElementById('identityFile').addEventListener('change', function () {
         const file = this.files[0];
         if (file) {

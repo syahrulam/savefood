@@ -40,7 +40,28 @@
                     </td>
                     <td>
                       {% if data.file_identitas %}
-                        <a href="{{ url_for('static', filename=data.file_identitas) }}" target="_blank">Lihat File</a>
+                        <!-- Tombol untuk membuka modal -->
+                        <button type="button" class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#modalIdentitas{{ loop.index }}">
+                          Lihat File
+                        </button>
+
+                        <!-- Modal untuk menampilkan file identitas -->
+                        <div class="modal fade" id="modalIdentitas{{ loop.index }}" tabindex="-1" aria-labelledby="modalIdentitasLabel{{ loop.index }}" aria-hidden="true">
+                          <div class="modal-dialog modal-lg">
+                            <div class="modal-content">
+                              <div class="modal-header">
+                                <h5 class="modal-title" id="modalIdentitasLabel{{ loop.index }}">File Identitas - {{ nama_penerima }}</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                              </div>
+                              <div class="modal-body text-center">
+                                <!-- Menampilkan file identitas -->
+                                <img src="{{ url_for('static', filename=data.file_identitas) }}" 
+                                     alt="Identitas {{ nama_penerima }}" 
+                                     class="img-fluid rounded">
+                              </div>
+                            </div>
+                          </div>
+                        </div>
                       {% else %}
                         <span class="text-muted">Tidak Ada</span>
                       {% endif %}
@@ -53,11 +74,14 @@
                       </ul>
                     </td>
                     <td>{{ data.total_kebutuhan }}</td>
+                    <td>
+                      <button class="btn btn-warning btn-sm">Pending</button>
+                    </td>
                   </tr>
                   {% endfor %}
                 {% else %}
                   <tr>
-                    <td colspan="8" class="text-center">Tidak ada data penerima ditemukan.</td>
+                    <td colspan="9" class="text-center">Tidak ada data penerima ditemukan.</td>
                   </tr>
                 {% endif %}
               </tbody>

@@ -24,6 +24,7 @@
                   <th>Tanggal Kedaluwarsa</th>
                   <th>Lokasi Donatur</th>
                   <th>Tujuan Donatur</th>
+                  <th>Dokumen Bukti Donatur</th>
                   <th>Dokumen Verifikasi</th>
                   <th>Status</th>
                   <th>Tanggal Donasi</th>
@@ -40,36 +41,65 @@
                   <td>{{ donasi.jumlah_porsi }}</td>
                   <td>{{ donasi.tanggal_kedaluwarsa }}</td>
                   <td>{{ donasi.lokasi_donatur }}</td>
-                  <td>{{ donasi.tujuan }}</td>
-                  <td>
-                    {% if donasi.file_identitas %}
-                      <!-- Tombol untuk membuka modal -->
-                      <button type="button" class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#modalDokumen{{ donasi.id }}">
-                        Lihat Dokumen
-                      </button>
-                      
-                      <!-- Modal -->
-                      <div class="modal fade" id="modalDokumen{{ donasi.id }}" tabindex="-1" aria-labelledby="modalDokumenLabel{{ donasi.id }}" aria-hidden="true">
-                        <div class="modal-dialog modal-lg">
-                          <div class="modal-content">
-                            <div class="modal-header">
-                              <h5 class="modal-title" id="modalDokumenLabel{{ donasi.id }}">Dokumen Verifikasi - {{ donasi.nama_donatur }}</h5>
-                              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body text-center">
-                              <img src="{{ url_for('static', filename=donasi.file_identitas) }}" 
-     alt="Dokumen {{ donasi.nama_donatur }}" 
-     class="img-fluid rounded">
+                  <td>{{ donasi.tujuan }}</td> 
+                   <!-- File Bukti -->
+<td>
+  {% if donasi.file_bukti %}
+      <!-- Tombol untuk membuka modal file bukti -->
+      <button type="button" class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#modalBukti{{ donasi.id }}">
+          Lihat Bukti
+      </button>
 
+      <!-- Modal file bukti -->
+      <div class="modal fade" id="modalBukti{{ donasi.id }}" tabindex="-1" aria-labelledby="modalBuktiLabel{{ donasi.id }}" aria-hidden="true">
+          <div class="modal-dialog modal-lg">
+              <div class="modal-content">
+                  <div class="modal-header">
+                      <h5 class="modal-title" id="modalBuktiLabel{{ donasi.id }}">File Bukti - {{ donasi.nama_donatur }}</h5>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body text-center">
+                      <img src="{{ url_for('static', filename=donasi.file_bukti) }}" 
+                           alt="File Bukti {{ donasi.nama_donatur }}" 
+                           class="img-fluid rounded">
+                  </div>
+              </div>
+          </div>
+      </div>
+  {% else %}
+      <span class="text-muted">Tidak Ada Bukti</span>
+  {% endif %}
+</td>
 
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    {% else %}
-                      <span class="text-muted">Tidak Ada Dokumen</span>
-                    {% endif %}
-                  </td>
+<!-- File Identitas -->
+<td>
+  {% if donasi.file_identitas %}
+      <!-- Tombol untuk membuka modal file identitas -->
+      <button type="button" class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#modalIdentitas{{ donasi.id }}">
+          Lihat Identitas
+      </button>
+
+      <!-- Modal file identitas -->
+      <div class="modal fade" id="modalIdentitas{{ donasi.id }}" tabindex="-1" aria-labelledby="modalIdentitasLabel{{ donasi.id }}" aria-hidden="true">
+          <div class="modal-dialog modal-lg">
+              <div class="modal-content">
+                  <div class="modal-header">
+                      <h5 class="modal-title" id="modalIdentitasLabel{{ donasi.id }}">Dokumen Identitas - {{ donasi.nama_donatur }}</h5>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body text-center">
+                      <img src="{{ url_for('static', filename=donasi.file_identitas) }}" 
+                           alt="Dokumen Identitas {{ donasi.nama_donatur }}" 
+                           class="img-fluid rounded">
+                  </div>
+              </div>
+          </div>
+      </div>
+  {% else %}
+      <span class="text-muted">Tidak Ada Identitas</span>
+  {% endif %}
+</td>
+
                   <td>
                     <div class="badge 
                       {% if donasi.status == 'pending' %}

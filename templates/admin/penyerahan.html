@@ -1,0 +1,86 @@
+{% extends 'admin/base.html' %}
+{% set title = "Data Penyerahan" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h4>Data Penyerahan</h4>
+            </div>
+            <div class="card-body p-0">
+                {% if error_message %}
+                <div class="alert alert-danger">
+                    {{ error_message }}
+                </div>
+                {% endif %}
+                <div class="table-responsive">
+                    <table class="table table-striped table-bordered">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Donatur</th>
+                                <th>Penerima</th>
+                                <th>Jenis Makanan</th>
+                                <th>Jumlah Porsi</th>
+                                <th>Jumlah Kebutuhan</th>
+                                <th>Lokasi Donatur</th>
+                                <th>Alamat Penerima</th>
+                                <th>Jarak (km)</th>
+                                <th>Similarity (%)</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for row in hasil_pencocokan %}
+                            <tr>
+                                <td>{{ loop.index }}</td>
+                                <td>{{ row.nama_donatur }}</td>
+                                <td>{{ row.nama_penerima }}</td>
+                                <td>{{ row.jenis_makanan }}</td>
+                                <td>{{ row.jumlah_porsi }}</td>
+                                <td>{{ row.jumlah_kebutuhan }}</td>
+
+                                <!-- Menampilkan lokasi donatur sebagai tautan ke Google Maps -->
+                                <td>
+                                    <a href="https://www.google.com/maps?q={{ row.lokasi_donatur }}" target="_blank">
+                                        📍 Lihat Lokasi
+                                    </a>
+                                </td>
+
+                                <!-- Menampilkan alamat penerima sebagai tautan ke Google Maps -->
+                                <td>
+                                    <a href="https://www.google.com/maps?q={{ row.alamat_penerima }}" target="_blank">
+                                        📍 Lihat Lokasi
+                                    </a>
+                                </td>
+
+                                <!-- Jarak dalam km, dibulatkan ke 2 angka desimal -->
+                                <td>{{ "%.2f"|format(row.jarak_km) }} km</td>
+
+                                <!-- Menampilkan similarity dengan persentase yang lebih rapi -->
+                                <td>{{ "%.1f"|format(row.similarity * 100) }}%</td>
+
+                                <!-- Tombol WhatsApp untuk menghubungi penerima -->
+                                <td>
+                                    <a href="https://wa.me/{{ row.kontak_penerima }}?text={{ row.message | urlencode }}" 
+                                       class="btn btn-success" target="_blank">
+                                        Serahkan
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+
+                            {% if not hasil_pencocokan %}
+                            <tr>
+                                <td colspan="11" class="text-center">Tidak ada data untuk ditampilkan.</td>
+                            </tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
